@@ -21,14 +21,14 @@ class Card {
         this.node_audio.src = this.url_mp3;
         this.node_image.src = this.url_picture;
         this.node_image.classList.add('card__image')
-        this.node_element.classList.add('card');
+        this.node_element.className = 'card';
         this.node_coupimg.src = "images/rotate.png";
         this.node_coupimg.classList.add('card__coupimg')
         this.node_element.appendChild(this.node_image);
         this.node_element.appendChild(this.node_text);
         this.node_element.appendChild(this.node_coupimg);
         this.node_element.appendChild(this.node_audio);
-
+        this.node_audio.className = 'sound';
         node.appendChild(this.node_element);
     }
     coup() {
@@ -48,13 +48,14 @@ class Card {
             this.node_element.style.transform = "none";
             this.click = false;
         }
-
     }
+
 }
 class Cardlist {
     constructor() {
         this.cards = [];
         this.categorys = [];
+
     }
     addcards(cards = []) {
         cards.forEach((element) => {
@@ -62,9 +63,9 @@ class Cardlist {
             this.cards.push(new Card(card[0], card[1], card[2]));
         })
     }
-    getcard(name = "") {
+    getcard(name = "" || new Element()) {
         for (const iterator of this.cards) {
-            if (name == iterator.name || name == iterator.translation)
+            if (name == iterator.name || name == iterator.translation || name == iterator.node_audio)
                 return iterator;
         }
     }
@@ -74,6 +75,25 @@ class Cardlist {
                 this.categorys.push(card.category);
         });
     }
+    main_page() {
+        let arr_categorynorep = [];
+        main_page_activ = true;
+        main.innerHTML = '';
+        this.cards.forEach((el) => {
+            if (!arr_categorynorep.includes(el.category)) {
+                arr_categorynorep.push(el.category);
+                let newcard_node = document.createElement('div');
+                newcard_node.style.backgroundImage = 'url(' + el.url_picture + ')';
+                newcard_node.innerHTML = el.category;
+                newcard_node.className = 'card_main';
+                main.appendChild(newcard_node);
+                newcard_node.addEventListener('click', menu_click);
+
+            }
+
+        });
+
+    }
 }
 
 
@@ -82,19 +102,16 @@ let cards = new Cardlist();
 cards.addcards(cards_string);
 cards.searchcategorys();
 
+
+
 const main = document.querySelector('.main');
 const menu = document.querySelector('.menu__list');
 menu.addEventListener('click', (el) => {
-    if (el.target.localName == 'li') {
-        main.innerHTML = "";
-        cards.cards.forEach((card) => {
-            if (card.category == el.target.innerHTML) {
-                card.add__node(main);
-            }
-        });
-        addevent_card();
-    }
+    if (el.target.localName == 'li')
+        menu_click();
+
 });
+
 document.body.addEventListener('click', (event) => {
     if (document.querySelector('.header__menu').style.display != 'none' && event.target != burgerMenu) {
         document.querySelector('.header__menu').style.display = 'none';
@@ -135,14 +152,7 @@ function addevent_card() {
     });
     const cards_node = document.querySelectorAll('.card');
     cards_node.forEach((element) => {
-        element.addEventListener('click', (el) => {
-            if (!el.target.classList.contains('card__coupimg')) {
-                if (el.target.localName == 'div')
-                    el.target.lastElementChild.play();
-                else
-                    el.target.parentElement.lastElementChild.play();
-            }
-        });
+        element.addEventListener('click', add__play_song);
         element.addEventListener('mouseleave', (el) => {
             let card_temp = cards.getcard(el.target.querySelector('.card__text').innerHTML);
             if (card_temp.click) {
@@ -158,18 +168,151 @@ function cards__play_on() {
         element.querySelector('.card__image').style.height = '100%';
         element.querySelector('.card__text').style.display = 'none';
         element.querySelector('.card__coupimg').style.display = 'none';
+        element.removeEventListener('click', add__play_song);
     });
-    document.querySelector('.button__play').style.display = 'block';
+    play_active = true;
+    play__button_activ();
 
 }
 
 function cards__play_of() {
     const cards_node = document.querySelectorAll('.card');
+    button_play.style.borderRadius = '0';
+    game_active = false;
+    button_play.innerHTML = "Start game";
     cards_node.forEach((element) => {
         element.querySelector('.card__image').style.height = '200px';
         element.querySelector('.card__text').style.display = 'block';
         element.querySelector('.card__coupimg').style.display = 'block';
+        element.addEventListener('click', add__play_song);
+        element.querySelector('.card__image').removeEventListener('click', click_card_game);
     });
     document.querySelector('.button__play').style.display = 'none';
+    play_active = false;
+    play__button_activ();
 
+
+
+
+}
+let main_page_activ = false;
+let play_active = false;
+
+function add__play_song() {
+    if (!event.target.classList.contains('card__coupimg')) {
+        if (event.target.localName == 'div') {
+            event.target.lastElementChild.play();
+            let card = cards.getcard(event.target.querySelector('.card__text').innerHTML);
+            card.train_click += 1;
+        } else
+            event.target.parentElement.lastElementChild.play();
+        let card = cards.getcard(event.target.parentElement.querySelector('.card__text').innerHTML);
+        card.train_click += 1;
+
+    }
+}
+
+function menu_click() {
+    {
+        if (document.querySelector('.menu_element_active'))
+            document.querySelector('.menu_element_active').classList.remove('menu_element_active');
+        event.target.classList.add('menu_element_active');
+        button_play.innerHTML = 'Start game';
+        game_active = false;
+        main.innerHTML = "";
+        button_play.style.borderRadius = '0';
+        if (event.target.innerHTML == 'Main Page') {
+            cards.main_page();
+            play__button_activ();
+        } else {
+            cards.cards.forEach((card) => {
+                if (card.category == event.target.innerHTML) {
+                    card.add__node(main);
+                }
+            });
+            addevent_card();
+            if (play_active)
+                cards__play_on();
+            else cards__play_of();
+            main_page_activ = false;
+
+        }
+        play__button_activ();
+    }
+}
+
+function play__button_activ() {
+    if (!main_page_activ && play_active) document.querySelector('.button__play').style.display = 'block';
+    else document.querySelector('.button__play').style.display = 'none';
+}
+cards.main_page();
+// play game 
+const button_play = document.querySelector('.button__play');
+let game_active = false;
+button_play.addEventListener('click', () => {
+    if (!game_active) {
+        game_add_collecting_sounds();
+        game_active = true;
+        button_play.style.borderRadius = '100%';
+        const cards_node = document.querySelectorAll('.card');
+        cards_node.forEach((el) => {
+            el.querySelector('.card__image').addEventListener('click', click_card_game);
+            button_play.innerHTML = 'Repeat';
+        });
+        collecting_sounds[0].play();
+        errors = 0;
+    } else {
+        collecting_sounds[0].play();
+    }
+});
+let collecting_sounds = [];
+let errors = 0;
+let error_mp3 = new Audio('audio/error.mp3');
+let correctly_mp3 = new Audio('audio/correctly.mp3');
+let win_mp3 = new Audio('audio/win.mp3');
+let lose_mp3 = new Audio('audio/lose.mp3');
+
+function game_add_collecting_sounds() {
+    collecting_sounds = Array.prototype.slice.call(main.querySelectorAll('.sound'));
+    collecting_sounds.sort(function() {
+        return Math.random() - 0.5;
+    });
+}
+
+let smile = document.createElement('div');
+smile.classList.add('smile');
+
+function click_card_game() {
+    if (event.target.parentElement.lastElementChild == collecting_sounds[0]) {
+        event.target.parentElement.className = 'card_no_active';
+        cards.getcard(collecting_sounds[0]).play_true += 1;
+        collecting_sounds.shift();
+        correctly_mp3.play();
+        event.target.parentElement.querySelector('.card__image').removeEventListener('click', click_card_game);
+        if (collecting_sounds.length == 0) {
+            button_play.style.display = 'none';
+            main.innerHTML = '';
+
+            if (errors == 0) {
+                smile.style.backgroundImage = 'url(images/smailik17.png)';
+                win_mp3.play();
+            } else {
+                smile.style.backgroundImage = 'url(images/icon_lose.png)';
+                lose_mp3.play();
+            }
+            main.appendChild(smile);
+            game_active = false;
+            button_play.borderRadius = '0px';
+            setTimeout(() => {
+                cards.main_page();
+                play__button_activ();
+            }, 5000);
+
+        } else setTimeout(() => { collecting_sounds[0].play() }, 1000);
+
+    } else {
+        error_mp3.play();
+        errors++;
+        cards.getcard(collecting_sounds[0]).play_false += 1;
+    }
 }
