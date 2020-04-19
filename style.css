@@ -176,6 +176,7 @@ footer {
     border-radius: 20px;
     margin: 20px;
     display: none;
+    border-style: none;
 }
 
 .card_main {
