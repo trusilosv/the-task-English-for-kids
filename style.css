@@ -217,16 +217,26 @@ footer {
 }
 
 .statstable {
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
+    height: 70vh;
+    overflow: auto;
 }
 
 .menutable {
+    position: sticky;
+    top: 0;
     display: flex;
 }
 
 .menutable_element {
+    border-radius: 10px;
+    text-align: center;
+    background-color: rgb(250, 40, 40);
+    margin: 1px;
     width: 13vw;
+    word-wrap: break-word;
 }
 
 .stats_card {
@@ -234,6 +244,10 @@ footer {
 }
 
 .stats_card_element {
+    margin: 1px;
+    border-radius: 10px;
+    text-align: center;
     width: 13vw;
     word-wrap: break-word;
+    background-color: rgb(17, 201, 17);
 }
