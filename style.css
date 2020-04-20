@@ -231,12 +231,20 @@ footer {
 }
 
 .menutable_element {
-    border-radius: 10px;
     text-align: center;
     background-color: rgb(250, 40, 40);
-    margin: 1px;
+    margin: 0 1px 1px 1px;
     width: 13vw;
+    padding: 3px 0;
     word-wrap: break-word;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.menutable_element:hover {
+    box-shadow: 0 0 15px black;
+    border-radius: 15px;
+    font-weight: 800;
 }
 
 .stats_card {

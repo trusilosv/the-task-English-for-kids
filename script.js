@@ -14,6 +14,7 @@ class Card {
         this.node_audio = document.createElement('audio');
         this.node_coupimg = document.createElement('img');
         this.click = false;
+        this.percentage_incorrect = '0%';
 
     }
     add__node(node = document.body) {
@@ -50,6 +51,13 @@ class Card {
             this.click = false;
         }
     }
+    interestcalculation() {
+        let temp = Math.trunc(this.play_false / (this.play_true + this.play_false) * 100);
+        if (temp)
+            this.percentage_incorrect = temp + '%';
+
+
+    }
 
 }
 class Cardlist {
@@ -69,6 +77,7 @@ class Cardlist {
             if (name == iterator.name || name == iterator.translation || name == iterator.node_audio)
                 return iterator;
         }
+        return false;
     }
     searchcategorys() {
         this.cards.forEach((card) => {
@@ -98,17 +107,43 @@ class Cardlist {
     sort(parametr) {
         this.cards.sort(byField(parametr));
     }
+    save() {
+        let cardstats = '';
+        this.cards.forEach(el => {
+            cardstats += el.name + ' ' + el.play_true + ' ' + el.play_false + ' ' + el.train_click + ',';
+        });
+        localStorage.setItem('cards', cardstats);
+    }
+    load() {
+        let cardstats = localStorage.getItem('cards').split(',');
+        cardstats.forEach(el => {
+            let cardstatsarray = el.split(' ');
+            let card = this.getcard(cardstatsarray[0]);
+            if (card) {
+                card.play_true = +cardstatsarray[1];
+                card.play_false = +cardstatsarray[2];
+                card.train_click = +cardstatsarray[3];
+            }
+        });
+    }
 }
+let byFieldf = false;
 
 function byField(field) {
-    return (a, b) => a[field] > b[field] ? 1 : -1;
+    if (byFieldf) {
+        byFieldf = false;
+        return (a, b) => a[field] > b[field] ? 1 : -1;
+    } else {
+        byFieldf = true;
+        return (a, b) => a[field] < b[field] ? 1 : -1;
+    }
 }
 
 const cards_string = ['cry,плакать,Action (set A)', 'dance,танцевать,Action (set A)', 'dive,нырять,Action (set A)', 'draw,рисовать,Action (set A)', 'fly,летать,Action (set A)', 'fish,ловить рыбу,Action (set A)', 'hug,обнимать,Action (set A)', 'jump,прыгать,Action (set A)', 'open,открывать,Action (set B)', 'play,играть,Action (set B)', 'point,указывать,Action (set B)', 'swim,плавать,Action (set B)', 'ride,ездить,Action (set B)', 'run,бегать,Action (set B)', 'sing,петь,Action (set B)', 'skip,пропускать,Action (set B)', 'argue,спорить,Action (set C)', 'build,строить,Action (set C)', 'carry,нести,Action (set C)', 'drop,падать,Action (set C)', 'catch,ловить,Action (set C)', 'drive,водить машину,Action (set C)', 'pull,тянуть,Action (set C)', 'push,толкать,Action (set C)', 'big,большой,Adjective', 'small,маленький,Adjective', 'fast,быстрый,Adjective', 'slow,медленный,Adjective', 'friendly,дружелюбный,Adjective', 'unfriendly,недружелюбный,Adjective', 'young,молодой,Adjective', 'old,старый,Adjective', 'cat,кот,Animal (set A)', 'chick,цыпплёнок,Animal (set A)', 'chicken,курица,Animal (set A)', 'dog,собака,Animal (set A)', 'horse,лошадь,Animal (set A)', 'pig,свинья,Animal (set A)', 'rabbit,кролик,Animal (set A)', 'sheep,овца,Animal (set A)', 'bird,птица,Animal (set B)', 'fish,рыба,Animal (set B)', 'frog,лягушка,Animal (set B)', 'giraffe,жираф,Animal (set B)', 'lion,лев,Animal (set B)', 'mouse,мышь,Animal (set B)', 'turtle,черепаха,Animal (set B)', 'dolphin,дельфин,Animal (set B)', 'skirt,юбка,Clothes', 'pants,брюки,Clothes', 'blouse,блузка,Clothes', 'dress,платье,Clothes', 'boot,ботинок,Clothes', 'shirt,рубашка,Clothes', 'coat,пальто,Clothes', 'shoe,туфли,Clothes', 'sad,грустный,Emotion', 'angry,злой,Emotion', 'happy,счастливый,Emotion', 'tired,уставший,Emotion', 'surprised,удивленный,Emotion', 'scared,испуганный,Emotion', 'smile,улыбка,Emotion', 'laugh,смех,Emotion'];
 let cards = new Cardlist();
 cards.addcards(cards_string);
 cards.searchcategorys();
-
+cards.load();
 const main = document.querySelector('.main');
 const menu = document.querySelector('.menu__list');
 menu.addEventListener('click', (el) => {
@@ -226,7 +261,7 @@ function menu_click() {
             play__button_activ();
         } else {
             if (event.target.innerHTML == 'statistics') {
-                open_stats();
+                createstatstable();
 
             } else {
                 cards.cards.forEach((card) => {
@@ -329,11 +364,18 @@ let statistics_components = [
     ['Train click', 'train_click'],
     ['Correct answer', 'play_true'],
     ['Incorrect answer', 'play_false'],
-    ['percentage of incorrect', '']
+    ['percentage of incorrect', 'percentage_incorrect']
 ];
+let meintableelements = [];
+let tableelements = [];
+const statstable = document.createElement('div');
 
-function open_stats() {
-    const statstable = document.createElement('div');
+
+function createstatstable() {
+
+    statstable.innerHTML = '';
+    tableelements = [];
+    meintableelements = [];
     statstable.classList.add('statstable');
     const menutable = document.createElement('div');
     menutable.classList.add('menutable');
@@ -343,20 +385,40 @@ function open_stats() {
         menutable_element.classList.add('menutable_element');
         menutable_element.innerHTML = element[0];
         menutable.appendChild(menutable_element);
+        menutable.addEventListener('click', sorttable);
+        meintableelements.push(menutable_element);
+
     });
     cards.cards.forEach(card => {
+        card.interestcalculation();
         const stats_card = document.createElement('div');
         stats_card.classList.add('stats_card');
         statistics_components.forEach(element => {
             const stats_card_element = document.createElement('div');
             stats_card_element.classList.add('stats_card_element');
-            if (element[1] == '')
-                stats_card_element.innerHTML = (Math.trunc(card.play_false / (card.play_true + cards.play_false) * 100) || 0) + '%';
-            else
-                stats_card_element.innerHTML = card[element[1]];
+            stats_card_element.innerHTML = card[element[1]];
             stats_card.appendChild(stats_card_element);
         });
         statstable.appendChild(stats_card);
+        tableelements.push(stats_card);
     });
     main.appendChild(statstable);
 };
+
+function sorttable() {
+    statistics_components.forEach(el => {
+        if (el[0] == event.target.innerHTML)
+            cards.sort(el[1]);
+    })
+    let index = 0;
+    cards.cards.forEach((card) => {
+        tableelements.forEach((node_element) => {
+            if (card.name == node_element.children[1].innerHTML)
+                node_element.style.order = index;
+        });
+        index++;
+    });
+}
+window.onunload = () => {
+    cards.save();
+}
