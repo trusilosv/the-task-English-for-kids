@@ -115,16 +115,18 @@ class Cardlist {
         localStorage.setItem('cards', cardstats);
     }
     load() {
-        let cardstats = localStorage.getItem('cards').split(',');
-        cardstats.forEach(el => {
-            let cardstatsarray = el.split(' ');
-            let card = this.getcard(cardstatsarray[0]);
-            if (card) {
-                card.play_true = +cardstatsarray[1];
-                card.play_false = +cardstatsarray[2];
-                card.train_click = +cardstatsarray[3];
-            }
-        });
+        if (localStorage.getItem('cards')) {
+            let cardstats = localStorage.getItem('cards').split(',');
+            cardstats.forEach(el => {
+                let cardstatsarray = el.split(' ');
+                let card = this.getcard(cardstatsarray[0]);
+                if (card) {
+                    card.play_true = +cardstatsarray[1];
+                    card.play_false = +cardstatsarray[2];
+                    card.train_click = +cardstatsarray[3];
+                }
+            });
+        }
     }
 }
 let byFieldf = false;
