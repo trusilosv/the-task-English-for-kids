@@ -215,3 +215,25 @@ footer {
     height: 500px;
     background-size: 100%, 100%;
 }
+
+.statstable {
+    display: flex;
+    flex-direction: column;
+}
+
+.menutable {
+    display: flex;
+}
+
+.menutable_element {
+    width: 13vw;
+}
+
+.stats_card {
+    display: flex;
+}
+
+.stats_card_element {
+    width: 13vw;
+    word-wrap: break-word;
+}
