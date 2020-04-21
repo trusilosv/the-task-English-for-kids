@@ -85,25 +85,7 @@ class Cardlist {
                 this.categorys.push(card.category);
         });
     }
-    main_page() {
-        let arr_categorynorep = [];
-        main_page_activ = true;
-        main.innerHTML = '';
-        this.cards.forEach((el) => {
-            if (!arr_categorynorep.includes(el.category)) {
-                arr_categorynorep.push(el.category);
-                let newcard_node = document.createElement('div');
-                newcard_node.style.backgroundImage = 'url(' + el.url_picture + ')';
-                newcard_node.innerHTML = el.category;
-                newcard_node.className = 'card_main';
-                main.appendChild(newcard_node);
-                newcard_node.addEventListener('click', menu_click);
 
-            }
-
-        });
-
-    }
     sort(parametr) {
         this.cards.sort(byField(parametr));
     }
@@ -128,7 +110,17 @@ class Cardlist {
             });
         }
     }
+    resetstats() {
+        this.cards.forEach(card => {
+            card.play_false = 0;
+            card.play_true = 0;
+            card.train_click = 0;
+            card.percentage_incorrect = '0%';
+        });
+    }
+
 }
+// sort function
 let byFieldf = false;
 
 function byField(field) {
@@ -141,11 +133,35 @@ function byField(field) {
     }
 }
 
-const cards_string = ['cry,плакать,Action (set A)', 'dance,танцевать,Action (set A)', 'dive,нырять,Action (set A)', 'draw,рисовать,Action (set A)', 'fly,летать,Action (set A)', 'fish,ловить рыбу,Action (set A)', 'hug,обнимать,Action (set A)', 'jump,прыгать,Action (set A)', 'open,открывать,Action (set B)', 'play,играть,Action (set B)', 'point,указывать,Action (set B)', 'swim,плавать,Action (set B)', 'ride,ездить,Action (set B)', 'run,бегать,Action (set B)', 'sing,петь,Action (set B)', 'skip,пропускать,Action (set B)', 'argue,спорить,Action (set C)', 'build,строить,Action (set C)', 'carry,нести,Action (set C)', 'drop,падать,Action (set C)', 'catch,ловить,Action (set C)', 'drive,водить машину,Action (set C)', 'pull,тянуть,Action (set C)', 'push,толкать,Action (set C)', 'big,большой,Adjective', 'small,маленький,Adjective', 'fast,быстрый,Adjective', 'slow,медленный,Adjective', 'friendly,дружелюбный,Adjective', 'unfriendly,недружелюбный,Adjective', 'young,молодой,Adjective', 'old,старый,Adjective', 'cat,кот,Animal (set A)', 'chick,цыпплёнок,Animal (set A)', 'chicken,курица,Animal (set A)', 'dog,собака,Animal (set A)', 'horse,лошадь,Animal (set A)', 'pig,свинья,Animal (set A)', 'rabbit,кролик,Animal (set A)', 'sheep,овца,Animal (set A)', 'bird,птица,Animal (set B)', 'fish,рыба,Animal (set B)', 'frog,лягушка,Animal (set B)', 'giraffe,жираф,Animal (set B)', 'lion,лев,Animal (set B)', 'mouse,мышь,Animal (set B)', 'turtle,черепаха,Animal (set B)', 'dolphin,дельфин,Animal (set B)', 'skirt,юбка,Clothes', 'pants,брюки,Clothes', 'blouse,блузка,Clothes', 'dress,платье,Clothes', 'boot,ботинок,Clothes', 'shirt,рубашка,Clothes', 'coat,пальто,Clothes', 'shoe,туфли,Clothes', 'sad,грустный,Emotion', 'angry,злой,Emotion', 'happy,счастливый,Emotion', 'tired,уставший,Emotion', 'surprised,удивленный,Emotion', 'scared,испуганный,Emotion', 'smile,улыбка,Emotion', 'laugh,смех,Emotion'];
+const cards_string = ['cry,плакать,Action (set A)', 'dance,танцевать,Action (set A)', 'dive,нырять,Action (set A)', 'draw,рисовать,Action (set A)', 'fly,летать,Action (set A)', 'fish,ловить рыбу,Action (set A)', 'hug,обнимать,Action (set A)', 'jump,прыгать,Action (set A)', 'open,открывать,Action (set B)', 'play,играть,Action (set B)', 'point,указывать,Action (set B)', 'swim,плавать,Action (set B)', 'ride,ездить,Action (set B)', 'run,бегать,Action (set B)', 'sing,петь,Action (set B)', 'skip,пропускать,Action (set B)', 'argue,спорить,Action (set C)', 'build,строить,Action (set C)', 'carry,нести,Action (set C)', 'drop,падать,Action (set C)', 'catch,ловить,Action (set C)', 'drive,водить машину,Action (set C)', 'pull,тянуть,Action (set C)', 'push,толкать,Action (set C)', 'big,большой,Adjective', 'small,маленький,Adjective', 'fast,быстрый,Adjective', 'slow,медленный,Adjective', 'friendly,дружелюбный,Adjective', 'unfriendly,недружелюбный,Adjective', 'young,молодой,Adjective', 'old,старый,Adjective', 'cat,кот,Animal (set A)', 'chick,цыпплёнок,Animal (set A)', 'chicken,курица,Animal (set A)', 'dog,собака,Animal (set A)', 'horse,лошадь,Animal (set A)', 'pig,свинья,Animal (set A)', 'rabbit,кролик,Animal (set A)', 'sheep,овца,Animal (set A)', 'bird,птица,Animal (set B)', 'elephant,слон,Animal (set B)', 'frog,лягушка,Animal (set B)', 'giraffe,жираф,Animal (set B)', 'lion,лев,Animal (set B)', 'mouse,мышь,Animal (set B)', 'turtle,черепаха,Animal (set B)', 'dolphin,дельфин,Animal (set B)', 'skirt,юбка,Clothes', 'pants,брюки,Clothes', 'blouse,блузка,Clothes', 'dress,платье,Clothes', 'boot,ботинок,Clothes', 'shirt,рубашка,Clothes', 'coat,пальто,Clothes', 'shoe,туфли,Clothes', 'sad,грустный,Emotion', 'angry,злой,Emotion', 'happy,счастливый,Emotion', 'tired,уставший,Emotion', 'surprised,удивленный,Emotion', 'scared,испуганный,Emotion', 'smile,улыбка,Emotion', 'laugh,смех,Emotion'];
 let cards = new Cardlist();
 cards.addcards(cards_string);
 cards.searchcategorys();
 cards.load();
+
+function main_page(cards = new Cardlist) {
+    let arr_categorynorep = [];
+    main_page_activ = true;
+    main.innerHTML = '';
+    cards.cards.forEach((el) => {
+        if (!arr_categorynorep.includes(el.category)) {
+            arr_categorynorep.push(el.category);
+            let newcard_node = document.createElement('div');
+            newcard_node.style.backgroundImage = 'url(' + el.url_picture + ')';
+            newcard_node.innerHTML = el.category;
+            newcard_node.className = 'card_main';
+            main.appendChild(newcard_node);
+            newcard_node.addEventListener('click', menu_click);
+
+        }
+
+    });
+
+}
+
+
+
+
 const main = document.querySelector('.main');
 const menu = document.querySelector('.menu__list');
 menu.addEventListener('click', (el) => {
@@ -178,9 +194,11 @@ header__switch.addEventListener('click', (event) => {
         document.querySelector('.header__mod').innerHTML = 'TRAIN';
         cards__play_of();
     } else {
-        header__switch.firstElementChild.classList.add('switch__circle_active');
-        document.querySelector('.header__mod').innerHTML = 'PLAY';
-        cards__play_on();
+        if (document.querySelector('.main').childElementCount != 0 && document.querySelector('.main').firstChild.classList.contains('card')) {
+            header__switch.firstElementChild.classList.add('switch__circle_active');
+            document.querySelector('.header__mod').innerHTML = 'PLAY';
+            cards__play_on();
+        }
     }
 });
 
@@ -214,11 +232,12 @@ function cards__play_on() {
     });
     play_active = true;
     play__button_activ();
+
 }
 
 function cards__play_of() {
     const cards_node = document.querySelectorAll('.card');
-    button_play.style.borderRadius = '0';
+    button_play.style.borderRadius = '0px';
     game_active = false;
     button_play.innerHTML = 'Start game';
     cards_node.forEach((element) => {
@@ -251,6 +270,14 @@ function add__play_song() {
 
 function menu_click() {
     {
+        byFieldf = true;
+        cards.sort('category');
+        header__switch.firstElementChild.classList.remove('switch__circle_active');
+        document.querySelector('.header__mod').innerHTML = 'TRAIN';
+        cards__play_of();
+        document.querySelectorAll('.button_stats').forEach((button) => {
+            button.style.display = 'none';
+        });
         if (document.querySelector('.menu_element_active'))
             document.querySelector('.menu_element_active').classList.remove('menu_element_active');
         event.target.classList.add('menu_element_active');
@@ -259,7 +286,7 @@ function menu_click() {
         main.innerHTML = '';
         button_play.style.borderRadius = '0';
         if (event.target.innerHTML == 'Main Page') {
-            cards.main_page();
+            main_page(cards);
             play__button_activ();
         } else {
             if (event.target.innerHTML == 'statistics') {
@@ -283,15 +310,22 @@ function menu_click() {
 }
 
 function play__button_activ() {
-    if (!main_page_activ && play_active) document.querySelector('.button__play').style.display = 'block';
-    else document.querySelector('.button__play').style.display = 'none';
+    if (!main_page_activ && play_active && document.querySelector('.main').firstChild.classList.contains('card')) {
+        document.querySelectorAll('.button_stats').forEach((button) => button.style.display = 'none');
+        document.querySelector('.button__play').style.display = 'block';
+    } else document.querySelector('.button__play').style.display = 'none';
 }
-cards.main_page();
+
+main_page(cards);
 // play game 
+
+const star_conteiner = document.createElement('div');
+star_conteiner.classList.add('star_conteiner');
 const button_play = document.querySelector('.button__play');
 let game_active = false;
 button_play.addEventListener('click', () => {
     if (!game_active) {
+
         game_add_collecting_sounds();
         game_active = true;
         button_play.style.borderRadius = '100%';
@@ -337,6 +371,7 @@ function click_card_game() {
             if (errors == 0) {
                 smile.style.backgroundImage = 'url(images/smailik17.png)';
                 win_mp3.play();
+
             } else {
                 smile.style.backgroundImage = 'url(images/icon_lose.png)';
                 lose_mp3.play();
@@ -345,11 +380,14 @@ function click_card_game() {
             game_active = false;
             button_play.borderRadius = '0px';
             setTimeout(() => {
-                cards.main_page();
+                main_page(cards);
                 play__button_activ();
-            }, 5000);
+                header__switch.firstElementChild.classList.remove('switch__circle_active');
+                document.querySelector('.header__mod').innerHTML = 'TRAIN';
+                cards__play_of();
+            }, 4000);
 
-        } else setTimeout(() => { collecting_sounds[0].play() }, 1000);
+        } else setTimeout(() => { if (collecting_sounds.length != 0) collecting_sounds[0].play() }, 1000);
 
     } else {
         error_mp3.play();
@@ -372,9 +410,11 @@ let meintableelements = [];
 let tableelements = [];
 const statstable = document.createElement('div');
 
-
 function createstatstable() {
-
+    document.querySelectorAll('.button_stats').forEach((button) => {
+        button.style.display = 'block';
+    });
+    document.querySelector('.button__play').style.display = 'none';
     statstable.innerHTML = '';
     tableelements = [];
     meintableelements = [];
@@ -424,3 +464,26 @@ function sorttable() {
 window.onunload = () => {
     cards.save();
 }
+document.querySelector('.button_reset').addEventListener('click', () => {
+    cards.resetstats();
+    main.innerHTML = '';
+    createstatstable();
+});
+document.querySelector('.button_repeat').addEventListener('click', () => {
+    document.querySelectorAll('.button_stats').forEach(button => { button.style.display = 'none' });
+    main.innerHTML = '';
+    byFieldf = false;
+    cards.sort('play_false');
+    let index = 0;
+    play__button_activ();
+    while (index < 8 && cards.cards[index].play_false != 0) {
+        cards.cards[index].add__node(main);
+        index++;
+    }
+    addevent_card();
+    if (play_active)
+        cards__play_on();
+    else cards__play_of();
+    main_page_activ = false;
+
+});
