@@ -289,6 +289,7 @@ footer {
     top: 0;
     width: 80vw;
     overflow: hidden;
+    z-index: 5;
 }
 
 .star {
