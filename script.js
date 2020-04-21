@@ -152,16 +152,9 @@ function main_page(cards = new Cardlist) {
             newcard_node.className = 'card_main';
             main.appendChild(newcard_node);
             newcard_node.addEventListener('click', menu_click);
-
         }
-
     });
-
 }
-
-
-
-
 const main = document.querySelector('.main');
 const menu = document.querySelector('.menu__list');
 menu.addEventListener('click', (el) => {
@@ -318,14 +311,14 @@ function play__button_activ() {
 
 main_page(cards);
 // play game 
-
 const star_conteiner = document.createElement('div');
 star_conteiner.classList.add('star_conteiner');
 const button_play = document.querySelector('.button__play');
 let game_active = false;
 button_play.addEventListener('click', () => {
     if (!game_active) {
-
+        main.prepend(star_conteiner);
+        star_conteiner.innerHTML = '';
         game_add_collecting_sounds();
         game_active = true;
         button_play.style.borderRadius = '100%';
@@ -358,7 +351,11 @@ let smile = document.createElement('div');
 smile.classList.add('smile');
 
 function click_card_game() {
+    const star = document.createElement('div');
+    star.classList.add('star');
     if (event.target.parentElement.lastElementChild == collecting_sounds[0]) {
+        star_conteiner.prepend(star);
+        star.style.backgroundImage = 'url(images/star2.svg)';
         event.target.parentElement.className = 'card_no_active';
         cards.getcard(collecting_sounds[0]).play_true += 1;
         collecting_sounds.shift();
@@ -385,11 +382,13 @@ function click_card_game() {
                 header__switch.firstElementChild.classList.remove('switch__circle_active');
                 document.querySelector('.header__mod').innerHTML = 'TRAIN';
                 cards__play_of();
-            }, 4000);
+            }, 2000);
 
         } else setTimeout(() => { if (collecting_sounds.length != 0) collecting_sounds[0].play() }, 1000);
 
     } else {
+        star_conteiner.prepend(star);
+        star.style.backgroundImage = 'url(images/star.svg)';
         error_mp3.play();
         errors++;
         cards.getcard(collecting_sounds[0]).play_false += 1;
